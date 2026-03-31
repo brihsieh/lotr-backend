@@ -88,6 +88,7 @@ export default async function handler(req, res) {
     const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
 
     // Strip any accidental markdown code fences before parsing
+    console.log('Gemini rawText:', rawText);
     const cleaned = rawText.replace(/```json|```/g, '').trim();
     const recommendations = JSON.parse(cleaned);
 
