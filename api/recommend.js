@@ -53,11 +53,11 @@ export default async function handler(req, res) {
   const prompt = [
     "You are a literary recommendation engine for J.R.R. Tolkien's Lord of the Rings trilogy.",
     "Available quotes (JSON): " + JSON.stringify(slimQuotes),
-    "Task: Select the 2 quotes that best resonate with the user's situation based on emotional and thematic resonance.",
-    'Return ONLY a valid JSON array, no markdown, no preamble:',
-    '[{"uuid": "<uuid>", "reason": "<1-2 sentences why this fits>"}, {"uuid": "<uuid>", "reason": "<1-2 sentences why this fits>"}]',
+    "User situation: " + situation.trim(),
     "",
-    "User situation: " + situation.trim()
+    "Select the 2 quotes that best resonate with the user situation based on emotional and thematic resonance.",
+    "Your entire response must be ONLY a raw JSON array. No markdown. No code fences. No explanation. No preamble. No postamble.",
+    'Exact required format: [{"uuid":"1a2b3c4d-0001","reason":"One or two sentences."},{"uuid":"1a2b3c4d-0002","reason":"One or two sentences."}]'
   ].join("\n");
 
   // ── Call the Anthropic API ────────────────────────────────────────────────
@@ -72,7 +72,7 @@ export default async function handler(req, res) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { maxOutputTokens: 1024 }
+        generationConfig: { maxOutputTokens: 2048 }
       })
     });
 
