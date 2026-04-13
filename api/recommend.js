@@ -64,8 +64,8 @@ export default async function handler(req, res) {
   // ANTHROPIC_API_KEY is set as an environment variable in Vercel's dashboard.
   // It is never sent to the browser.
   try {
-    // Gemini API endpoint — model is gemini-2.5-flash which is free tier eligible
-    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`;
+    // Gemini API endpoint — model is gemini-3.1-flash-lite-preview which is free tier eligible
+    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite-preview:generateContent?key=${process.env.GEMINI_API_KEY}`;
 
     const anthropicResponse = await fetch(geminiUrl, {
       method: "POST",
