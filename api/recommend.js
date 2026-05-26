@@ -2,7 +2,7 @@
  * api/recommend.js — Vercel Serverless Function
  *
  * This function acts as a secure proxy between the GitHub Pages frontend
- * and the Anthropic API. The API key lives here as an environment variable,
+ * and the Gemini API. The API key lives here as an environment variable,
  * so it is never exposed in the browser.
  *
  * Endpoint: POST /api/recommend
@@ -60,14 +60,14 @@ export default async function handler(req, res) {
     'Exact required format: [{"uuid":"1a2b3c4d-0001","reason":"One or two sentences."},{"uuid":"1a2b3c4d-0002","reason":"One or two sentences."}]'
   ].join("\n");
 
-  // ── Call the Anthropic API ────────────────────────────────────────────────
-  // ANTHROPIC_API_KEY is set as an environment variable in Vercel's dashboard.
+  // ── Call the Gemini API ────────────────────────────────────────────────
+  // GEMINI_API_KEY is set as an environment variable in Vercel's dashboard.
   // It is never sent to the browser.
   try {
-    // Gemini API endpoint — model is gemini-3.1-flash-lite-preview which is free tier eligible
-    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite-preview:generateContent?key=${process.env.GEMINI_API_KEY}`;
+    // Gemini API endpoint — model is gemini-3.1-flash-lite which is free tier eligible
+    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=${process.env.GEMINI_API_KEY}`;
 
-    const anthropicResponse = await fetch(geminiUrl, {
+    const geminiResponse = await fetch(geminiUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -76,13 +76,13 @@ export default async function handler(req, res) {
       })
     });
 
-    if (!anthropicResponse.ok) {
-      const errText = await anthropicResponse.text();
+    if (!geminiResponse.ok) {
+      const errText = await geminiResponse.text();
       console.error('Gemini API error:', errText);
-      return res.status(502).json({ error: `Gemini API error: ${anthropicResponse.status}` });
+      return res.status(502).json({ error: `Gemini API error: ${geminiResponse.status}` });
     }
 
-    const data = await anthropicResponse.json();
+    const data = await geminiResponse.json();
 
     // Gemini returns: candidates[0].content.parts[0].text
     const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
